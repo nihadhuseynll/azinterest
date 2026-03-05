@@ -1,4 +1,4 @@
-package com.azinterest.interestservice.exception;
+package com.azinterest.interestservice.exception.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,0 +1,6 @@
+rootProject.name = 'azinterest'
+
+include('user-service')
+include('pin-service')
+include('search-service')
+include('interest-service')

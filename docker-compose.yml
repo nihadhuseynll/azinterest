@@ -1,0 +1,135 @@
+version: "3.9"
+
+services:
+  postgres-keycloak:
+    image: postgres:16
+    container_name: postgres-keycloak
+    restart: always
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - "5454:5432"
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    networks:
+      - azinterest
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak_db
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "9595:8080"
+    depends_on:
+      - postgres-keycloak
+    networks:
+      - azinterest
+  postgres-user:
+    image: postgres:16
+    container_name: postgres-user
+    restart: always
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+    ports:
+      - "5434:5432"
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - azinterest
+  postgres-interest:
+    image: postgres:16
+    container_name: postgres-interest
+    restart: always
+    environment:
+      POSTGRES_DB: interest_db
+      POSTGRES_USER: interest
+      POSTGRES_PASSWORD: interest
+    ports:
+      - "5428:5432"
+    volumes:
+      - interest_db_data:/var/lib/postgresql/data
+    networks:
+      - azinterest
+  postgres-pin:
+    image: postgres:16
+    container_name: postgres-pin
+    restart: always
+    environment:
+      POSTGRES_DB: pin_db
+      POSTGRES_USER: pin
+      POSTGRES_PASSWORD: pin
+    ports:
+      - "5435:5432"
+    volumes:
+      - pin_db_data:/var/lib/postgresql/data
+    networks:
+      - azinterest
+  postgres-search:
+    image: postgres:16
+    container_name: postgres-search
+    restart: always
+    environment:
+      POSTGRES_DB: search_db
+      POSTGRES_USER: search
+      POSTGRES_PASSWORD: search
+    ports:
+      - "5436:5432"
+    volumes:
+      - search_db_data:/var/lib/postgresql/data
+    networks:
+      - azinterest
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    depends_on:
+      - postgres-user
+    ports:
+      - "8084:8084"
+    networks:
+      - azinterest
+  interest-service:
+    build: ./interest-service
+    container_name: interest-service
+    depends_on:
+      - postgres-interest
+    ports:
+      - "8088:8088"
+    networks:
+      - azinterest
+  pin-service:
+    build: ./pin-service
+    container_name: pin-service
+    depends_on:
+      - postgres-pin
+    ports:
+      - "8086:8086"
+    networks:
+      - azinterest
+  search-service:
+    build: ./search-service
+    container_name: search-service
+    depends_on:
+      - postgres-search
+    ports:
+      - "8087:8087"
+    networks:
+      - azinterest
+volumes:
+  keycloak_db_data:
+  user_db_data:
+  pin_db_data:
+  search_db_data:
+  interest_db_data:
+networks:
+  azinterest:
+    driver: bridge

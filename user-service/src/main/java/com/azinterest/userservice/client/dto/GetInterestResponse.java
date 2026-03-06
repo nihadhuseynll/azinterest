@@ -1,4 +1,4 @@
-package com.azinterest.interestservice.dto.response;
+package com.azinterest.userservice.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

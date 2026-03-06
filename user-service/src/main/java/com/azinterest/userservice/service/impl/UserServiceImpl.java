@@ -1,8 +1,14 @@
 package com.azinterest.userservice.service.impl;
 
+import com.azinterest.userservice.client.InterestClient;
+import com.azinterest.userservice.client.dto.GetInterestResponse;
 import com.azinterest.userservice.dto.request.CompleteOnboardingRequest;
 import com.azinterest.userservice.dto.response.UserResponseDto;
 import com.azinterest.userservice.entity.User;
+import com.azinterest.userservice.exception.model.InterestNotFoundException;
+import com.azinterest.userservice.exception.model.MinimumInterestsRequiredException;
+import com.azinterest.userservice.exception.model.OnboardingAlreadyCompletedException;
+import com.azinterest.userservice.exception.model.UserNotFoundException;
 import com.azinterest.userservice.mapper.UserMapper;
 import com.azinterest.userservice.repository.UserRepository;
 import com.azinterest.userservice.service.UserService;
@@ -12,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -21,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final InterestClient interestClient;
 
     @Override
     public UserResponseDto createUserIfNotExists(String keycloakId) {
@@ -47,19 +55,29 @@ public class UserServiceImpl implements UserService {
         UUID keycloakUserId = UUID.fromString(keycloakId);
 
         User user = userRepository.findByKeycloakUserId(keycloakUserId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (user.isOnBoardingCompleted()) {
-            throw new RuntimeException("User is already onboarding completed");
+            throw new OnboardingAlreadyCompletedException("User is already onboarding completed");
         }
 
         if (completeOnboardingRequest.getInterestIds().size() < 3) {
-            throw new RuntimeException("At least 3 interests required");
+            throw new MinimumInterestsRequiredException("At least 3 interests required");
+        }
+
+        List<GetInterestResponse> interestsByIds = interestClient
+                .getInterestsByIds(completeOnboardingRequest.getInterestIds());
+
+        if (interestsByIds.size() != completeOnboardingRequest.getInterestIds().size()) {
+            throw new InterestNotFoundException("Some interests do not exist");
         }
 
         user.setGender(completeOnboardingRequest.getGender());
         user.setLanguage(completeOnboardingRequest.getLanguage());
         user.setCountry(completeOnboardingRequest.getCountry());
+        user.setInterestIds(completeOnboardingRequest.getInterestIds());
         user.setOnBoardingCompleted(true);
+
+        userRepository.save(user);
     }
 }

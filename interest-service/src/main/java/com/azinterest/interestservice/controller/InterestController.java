@@ -28,12 +28,12 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(interestService.createInterest(request));
     }
 
-    @GetMapping(params = "!ids")
+    @GetMapping
     public ResponseEntity<List<GetInterestResponse>> getInterests() {
         return ResponseEntity.status(HttpStatus.OK).body(interestService.getAllInterests());
     }
 
-    @GetMapping(params = "ids")
+    @GetMapping("/by-ids")
     public ResponseEntity<List<GetInterestResponse>> getInterestsByIds(@RequestParam Set<UUID> ids) {
         return ResponseEntity.status(HttpStatus.OK).body(interestService.getInterestsByIDs(ids));
     }

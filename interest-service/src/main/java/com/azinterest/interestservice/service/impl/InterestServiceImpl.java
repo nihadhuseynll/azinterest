@@ -42,7 +42,7 @@ public class InterestServiceImpl implements InterestService {
         try {
             Interest interest = interestMapper.toInterest(createInterestRequest);
             interest.setActive(true);
-            Interest saved = interestRepository.save(interest);
+            Interest saved = interestRepository.saveAndFlush(interest);
             return interestMapper.toCreateInterestResponse(saved);
         } catch (DataIntegrityViolationException ex) {
             throw new DuplicateInterestException("Interest name or slug already exists");

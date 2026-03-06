@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -19,5 +20,5 @@ public class CompleteOnboardingRequest {
     private Gender gender;
     private String language;
     private String country;
-    private List<UUID> interestIds;
+    private Set<UUID> interestIds;
 }

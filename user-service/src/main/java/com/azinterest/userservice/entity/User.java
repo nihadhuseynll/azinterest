@@ -47,6 +47,7 @@ public class User {
     private String bio;
     private String profileImageUrl;
     private boolean onBoardingCompleted;
+    private Set<UUID> interestIds;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

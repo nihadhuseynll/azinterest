@@ -41,7 +41,7 @@ public class InterestController {
     @PutMapping("/{id}")
     public ResponseEntity<UpdateInterestResponse> updateInterest(@PathVariable UUID id,
                                                                  @RequestBody UpdateInterestRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(interestService.updateInterest(id,request));
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.updateInterest(id, request));
     }
 
     @PatchMapping("/{id}")

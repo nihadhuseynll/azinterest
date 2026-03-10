@@ -2,10 +2,7 @@ package com.azinterest.interestservice.exception.handler;
 
 import com.azinterest.interestservice.exception.domain.ErrorCode;
 import com.azinterest.interestservice.exception.domain.ErrorResponse;
-import com.azinterest.interestservice.exception.model.DuplicateInterestException;
-import com.azinterest.interestservice.exception.model.InterestNameAlreadyExistsException;
-import com.azinterest.interestservice.exception.model.InterestNotFoundException;
-import com.azinterest.interestservice.exception.model.InterestSlugAlreadyExistsException;
+import com.azinterest.interestservice.exception.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,6 +122,63 @@ public class GlobalExceptionHandler {
                 .errorCode(ErrorCode.INTEREST_NOT_FOUND)
                 .message("Interest not found")
                 .developerMessage("Interest not found")
+                .path(request.getRequestURI())
+                .traceId(getTraceId())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InvalidFileException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileException(InvalidFileException ex) {
+
+        log.warn("Invalid file exception: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .errorCode(ErrorCode.INVALID_FILE)
+                .message("Multipart file is null or empty.")
+                .developerMessage("Multipart file is null or empty.")
+                .path(request.getRequestURI())
+                .traceId(getTraceId())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex) {
+
+        log.warn("File upload exception: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .errorCode(ErrorCode.FILE_UPLOAD_FAILED)
+                .message("File upload failed.")
+                .developerMessage("AWS S3 upload operation failed.")
+                .path(request.getRequestURI())
+                .traceId(getTraceId())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(AwsS3FileException.class)
+    public ResponseEntity<ErrorResponse> handleAwsS3FIleException(AwsS3FileException ex) {
+
+        log.warn("AwsS3FIle exception: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .errorCode(ErrorCode.UNSUPPORTED_FILE_TYPE)
+                .message("Unsupported file type.")
+                .developerMessage("Uploaded file type is not allowed.")
                 .path(request.getRequestURI())
                 .traceId(getTraceId())
                 .build();

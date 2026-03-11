@@ -1,5 +1,6 @@
 package com.azinterest.interestservice.dto.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,4 @@ public class CreateInterestRequest {
 
     @NotBlank(message = "Description cannot be null or empty")
     private String description;
-
-    @NotBlank(message = "ImageUrl cannot be null or empty")
-    private String imageUrl;
 }

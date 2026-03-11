@@ -21,7 +21,6 @@ public interface InterestMapper {
     @Mapping(target = "name",source = "name")
     @Mapping(target = "slug",source = "slug")
     @Mapping(target = "description",source = "description")
-    @Mapping(target = "imageUrl",source = "imageUrl")
     Interest toInterest(CreateInterestRequest createInterestRequest);
 
     @Mapping(target = "name",source = "name")

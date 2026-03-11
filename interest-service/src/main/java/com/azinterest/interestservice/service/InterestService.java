@@ -5,6 +5,7 @@ import com.azinterest.interestservice.dto.request.UpdateInterestRequest;
 import com.azinterest.interestservice.dto.response.CreateInterestResponse;
 import com.azinterest.interestservice.dto.response.GetInterestResponse;
 import com.azinterest.interestservice.dto.response.UpdateInterestResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,7 @@ public interface InterestService {
 
     List<GetInterestResponse> getAllInterests();
 
-    CreateInterestResponse createInterest(CreateInterestRequest createInterestRequest);
+    CreateInterestResponse createInterest(CreateInterestRequest createInterestRequest, MultipartFile image);
 
     List<GetInterestResponse> getInterestsByIDs(Set<UUID> ids);
 

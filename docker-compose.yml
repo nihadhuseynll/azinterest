@@ -100,6 +100,11 @@ services:
   interest-service:
     build: ./interest-service
     container_name: interest-service
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION_NAME: ${AWS_REGION_NAME}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
     depends_on:
       - postgres-interest
     ports:

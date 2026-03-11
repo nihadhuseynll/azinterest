@@ -9,8 +9,10 @@ import com.azinterest.interestservice.service.InterestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -23,9 +25,12 @@ public class InterestController {
 
     private final InterestService interestService;
 
-    @PostMapping
-    public ResponseEntity<CreateInterestResponse> createInterest(@Valid @RequestBody CreateInterestRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(interestService.createInterest(request));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateInterestResponse> createInterest(
+            @RequestPart("request") @Valid CreateInterestRequest request,
+            @RequestPart("image") MultipartFile image
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(interestService.createInterest(request, image));
     }
 
     @GetMapping
